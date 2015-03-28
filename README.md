@@ -1,5 +1,4 @@
 # is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.png)](http://godoc.org/github.com/tylerb/is) [![wercker status](https://app.wercker.com/status/ca19d08c7449039f40f9aec9418e4155/s "wercker status")](https://app.wercker.com/project/bykey/ca19d08c7449039f40f9aec9418e4155)
-========
 
 Is provides a quick, clean and simple framework for writing Go tests.
 
@@ -27,15 +26,15 @@ func TestSomething(t *testing.T) {
 }
 ```
 
-If you'd like a bit more information when a test fails, simply add a `.Msg()` call at the end of your assertion:
+If you'd like a bit more information when a test fails, you may use the `Msg()` method:
 
 ```go
 func TestSomething(t *testing.T) {
 	is := is.New(t)
 
 	expected := 10
-	result,details := awesomeFunction()
-	is.Equal(expected,result).Msg("result details: %s", details)
+	result, details := awesomeFunction()
+	is.Msg("result details: %s", details).Equal(expected,result)
 }
 ```
 

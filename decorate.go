@@ -23,7 +23,7 @@ func callerinfo() (string, int, bool) {
 		parts := strings.Split(file, "/")
 		dir := parts[len(parts)-2]
 		file = parts[len(parts)-1]
-		if dir != "is" || file == "is_test.go" {
+		if !strings.HasPrefix(dir, "is") || file == "is_test.go" {
 			break
 		}
 	}

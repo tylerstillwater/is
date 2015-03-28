@@ -144,41 +144,23 @@ func TestIs(t *testing.T) {
 	is.NotErr(nil)
 	is.True(true)
 	is.False(false)
+	is.Zero(nil)
+	is.Nil((*testStruct)(nil))
+
+	is.fail = func(format string, args ...interface{}) {}
+	is.Equal((*testStruct)(nil), &testStruct{})
+	is.Equal(&testStruct{}, (*testStruct)(nil))
+	is.Equal((*testStruct)(nil), (*testStruct)(nil))
 }
 
-type testAfter struct {
-	success bool
-	calls   int
-}
-
-// ensure after implements After interface
-var _ After = (*testAfter)(nil)
-
-func (a *testAfter) Msg(format string, args ...interface{}) {
-	if !a.success {
-		a.calls++
-	}
-}
-
-func TestIsAfter(t *testing.T) {
+func TestIsMsg(t *testing.T) {
 	is := New(t)
-	is.fail = func(format string, args ...interface{}) {
-	}
-	newAfter = func(success bool) After {
-		return &testAfter{success: success}
-	}
 
-	a := is.True(false)
-	a.Msg("testing after")
-
-	if a.(*testAfter).calls == 0 {
-		t.Logf("should have called the Msg method after failure")
+	is = is.Msg("something", "else")
+	if is.failFormat != "something" {
+		t.Fatal("failFormat not set")
 	}
-
-	a = is.True(true)
-	a.Msg("testing after")
-	if a.(*testAfter).calls == 1 {
-		t.Logf("should not have called the Msg method after failure")
+	if is.failArgs[0].(string) != "else" {
+		t.Fatal("failArgs not set")
 	}
-
 }
