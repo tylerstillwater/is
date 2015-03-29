@@ -44,7 +44,7 @@ If you would like to contribute, please:
 
 1. Create a GitHub issue regarding the contribution. Features and bugs should be discussed beforehand.
 2. Fork the repository.
-3. Create a pull request with your solution.
+3. Create a pull request with your solution. This pull request should reference and close the issues (Fix #2).
 
 All pull requests should:
 
