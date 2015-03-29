@@ -47,21 +47,38 @@ func decorate(s string) string {
 		file = "???"
 		line = 1
 	}
+
+	return buildCallerPrefix(file, line, s)
+}
+
+func buildCallerPrefix(file string, line int, s string) string {
 	buf := new(bytes.Buffer)
 	// Every line is indented at least one tab.
-	buf.WriteByte('\t')
+	err := buf.WriteByte('\t')
+	if err != nil {
+		return "???:1"
+	}
 	fmt.Fprintf(buf, "%s:%d: ", file, line)
 	lines := strings.Split(s, "\n")
 	if l := len(lines); l > 1 && lines[l-1] == "" {
 		lines = lines[:l-1]
 	}
-	for i, line := range lines {
+	for i, l := range lines {
 		if i > 0 {
 			// Second and subsequent lines are indented an extra tab.
-			buf.WriteString("\n\t\t")
+			_, err = buf.WriteString("\n\t\t")
+			if err != nil {
+				return "???:1"
+			}
 		}
-		buf.WriteString(line)
+		_, err = buf.WriteString(l)
+		if err != nil {
+			return "???:1"
+		}
 	}
-	buf.WriteByte('\n')
+	err = buf.WriteByte('\n')
+	if err != nil {
+		return "???:1"
+	}
 	return buf.String()
 }
