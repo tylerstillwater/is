@@ -66,3 +66,16 @@ func isEqual(a interface{}, b interface{}) bool {
 
 	return false
 }
+
+// fail is a function variable that is called by test functions when they
+// fail. It is overridden in test code for this package.
+var fail = failDefault
+
+// failDefault is the default failure function.
+func failDefault(is *Is, format string, args ...interface{}) {
+	fmt.Print(decorate(fmt.Sprintf(format, args...)))
+	if len(is.failFormat) != 0 {
+		fmt.Printf(is.failFormat+"\n", is.failArgs...)
+	}
+	is.TB.FailNow()
+}

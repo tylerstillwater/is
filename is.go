@@ -1,7 +1,6 @@
 package is
 
 import (
-	"fmt"
 	"log"
 	"testing"
 )
@@ -12,7 +11,6 @@ import (
 // fewer lines of code while improving communication of intent.
 type Is struct {
 	TB         testing.TB
-	fail       func(format string, args ...interface{})
 	failFormat string
 	failArgs   []interface{}
 }
@@ -23,15 +21,7 @@ func New(tb testing.TB) *Is {
 	if tb == nil {
 		log.Fatalln("You must provide a testing object.")
 	}
-	v := &Is{TB: tb}
-	v.fail = func(format string, args ...interface{}) {
-		fmt.Print(decorate(fmt.Sprintf(format, args...)))
-		if len(v.failFormat) != 0 {
-			fmt.Printf("\t"+v.failFormat+"\n", v.failArgs...)
-		}
-		tb.FailNow()
-	}
-	return v
+	return &Is{TB: tb}
 }
 
 // Msg defines a message to print in the event of a failure. This allows you
@@ -39,7 +29,6 @@ func New(tb testing.TB) *Is {
 func (is *Is) Msg(format string, args ...interface{}) *Is {
 	return &Is{
 		TB:         is.TB,
-		fail:       is.fail,
 		failFormat: format,
 		failArgs:   args,
 	}
@@ -54,7 +43,7 @@ func (is *Is) Msg(format string, args ...interface{}) *Is {
 func (is *Is) Equal(a interface{}, b interface{}) {
 	result := isEqual(a, b)
 	if !result {
-		is.fail("expected objects '%s' and '%s' to be equal, but got: %v and %v",
+		fail(is, "expected objects '%s' and '%s' to be equal, but got: %v and %v",
 			objectTypeName(a),
 			objectTypeName(b), a, b)
 	}
@@ -69,7 +58,7 @@ func (is *Is) Equal(a interface{}, b interface{}) {
 func (is *Is) NotEqual(a interface{}, b interface{}) {
 	result := isEqual(a, b)
 	if result {
-		is.fail("expected objects '%s' and '%s' not to be equal",
+		fail(is, "expected objects '%s' and '%s' not to be equal",
 			objectTypeName(a),
 			objectTypeName(b))
 	}
@@ -79,7 +68,7 @@ func (is *Is) NotEqual(a interface{}, b interface{}) {
 func (is *Is) Err(e error) {
 	result := isNil(e)
 	if result {
-		is.fail("expected error")
+		fail(is, "expected error")
 	}
 }
 
@@ -88,7 +77,7 @@ func (is *Is) Err(e error) {
 func (is *Is) NotErr(e error) {
 	result := isNil(e)
 	if !result {
-		is.fail("expected no error, but got: %v", e)
+		fail(is, "expected no error, but got: %v", e)
 	}
 }
 
@@ -96,7 +85,7 @@ func (is *Is) NotErr(e error) {
 func (is *Is) Nil(o interface{}) {
 	result := isNil(o)
 	if !result {
-		is.fail("expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
+		fail(is, "expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
 	}
 }
 
@@ -104,7 +93,7 @@ func (is *Is) Nil(o interface{}) {
 func (is *Is) NotNil(o interface{}) {
 	result := isNil(o)
 	if result {
-		is.fail("expected object '%s' not to be nil", objectTypeName(o))
+		fail(is, "expected object '%s' not to be nil", objectTypeName(o))
 	}
 }
 
@@ -112,7 +101,7 @@ func (is *Is) NotNil(o interface{}) {
 func (is *Is) True(b bool) {
 	result := b == true
 	if !result {
-		is.fail("expected boolean to be true")
+		fail(is, "expected boolean to be true")
 	}
 }
 
@@ -120,7 +109,7 @@ func (is *Is) True(b bool) {
 func (is *Is) False(b bool) {
 	result := b == false
 	if !result {
-		is.fail("expected boolean to be false")
+		fail(is, "expected boolean to be false")
 	}
 }
 
@@ -137,7 +126,7 @@ func (is *Is) False(b bool) {
 func (is *Is) Zero(o interface{}) {
 	result := isZero(o)
 	if !result {
-		is.fail("expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
+		fail(is, "expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
 	}
 }
 
@@ -154,6 +143,6 @@ func (is *Is) Zero(o interface{}) {
 func (is *Is) NotZero(o interface{}) {
 	result := isZero(o)
 	if result {
-		is.fail("expected object '%s' not to be zero value", objectTypeName(o))
+		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
 	}
 }

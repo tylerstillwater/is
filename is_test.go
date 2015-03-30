@@ -92,7 +92,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			is.fail = func(format string, args ...interface{}) {
+			fail = func(is *Is, format string, args ...interface{}) {
 				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
 				t.FailNow()
 			}
@@ -103,7 +103,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			is.fail = func(format string, args ...interface{}) {
+			fail = func(is *Is, format string, args ...interface{}) {
 				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
 				t.FailNow()
 			}
@@ -114,7 +114,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			is.fail = func(format string, args ...interface{}) {
+			fail = func(is *Is, format string, args ...interface{}) {
 				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
 				t.FailNow()
 			}
@@ -125,7 +125,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			is.fail = func(format string, args ...interface{}) {
+			fail = func(is *Is, format string, args ...interface{}) {
 				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
 				t.FailNow()
 			}
@@ -134,7 +134,7 @@ func TestIs(t *testing.T) {
 		is.NotZero(test.e)
 	}
 
-	is.fail = func(format string, args ...interface{}) {
+	fail = func(is *Is, format string, args ...interface{}) {
 		fmt.Print(decorate(fmt.Sprintf(format, args...)))
 		t.FailNow()
 	}
@@ -147,7 +147,7 @@ func TestIs(t *testing.T) {
 	is.Zero(nil)
 	is.Nil((*testStruct)(nil))
 
-	is.fail = func(format string, args ...interface{}) {}
+	fail = func(is *Is, format string, args ...interface{}) {}
 	is.Equal((*testStruct)(nil), &testStruct{})
 	is.Equal(&testStruct{}, (*testStruct)(nil))
 	is.Equal((*testStruct)(nil), (*testStruct)(nil))
