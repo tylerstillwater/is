@@ -1,5 +1,7 @@
 # is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.png)](http://godoc.org/github.com/tylerb/is) [![Build Status](https://drone.io/github.com/tylerb/is/status.png)](https://drone.io/github.com/tylerb/is/latest) [![Coverage Status](https://coveralls.io/repos/tylerb/is/badge.svg?branch=master)](https://coveralls.io/r/tylerb/is?branch=master) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tylerb/is?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+[![Join the chat at https://gitter.im/tylerb/is](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tylerb/is?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Is provides a quick, clean and simple framework for writing Go tests.
 
 ## Installation
