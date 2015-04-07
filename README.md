@@ -1,4 +1,4 @@
-# is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.png)](http://godoc.org/github.com/tylerb/is) [![wercker status](https://app.wercker.com/status/ca19d08c7449039f40f9aec9418e4155/s "wercker status")](https://app.wercker.com/project/bykey/ca19d08c7449039f40f9aec9418e4155)
+# is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.png)](http://godoc.org/github.com/tylerb/is) [![Build Status](https://drone.io/github.com/tylerb/is/status.png)](https://drone.io/github.com/tylerb/is/latest) [![Coverage Status](https://coveralls.io/repos/tylerb/is/badge.svg?branch=master)](https://coveralls.io/r/tylerb/is?branch=master)
 
 Is provides a quick, clean and simple framework for writing Go tests.
 
