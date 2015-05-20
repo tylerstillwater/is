@@ -1,9 +1,13 @@
 package is
 
 import (
+	"io"
 	"log"
+	"os"
 	"testing"
 )
+
+var output io.Writer = os.Stdout
 
 // Is provides methods that leverage the existing testing capabilities found
 // in the Go test framework. The methods provided allow for a more natural,
@@ -145,4 +149,11 @@ func (is *Is) NotZero(o interface{}) {
 	if result {
 		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
 	}
+}
+
+// SetOutput changes the message output Writer from the default (os.Stdout).
+// This may be useful if the application under test takes over the console, or
+// if logging to a file is desired.
+func SetOutput(w io.Writer) {
+	output = w
 }
