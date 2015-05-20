@@ -73,9 +73,9 @@ var fail = failDefault
 
 // failDefault is the default failure function.
 func failDefault(is *Is, format string, args ...interface{}) {
-	fmt.Print(decorate(fmt.Sprintf(format, args...)))
+	fmt.Fprint(output, decorate(fmt.Sprintf(format, args...)))
 	if len(is.failFormat) != 0 {
-		fmt.Printf(is.failFormat+"\n", is.failArgs...)
+		fmt.Fprintf(output, is.failFormat+"\n", is.failArgs...)
 	}
 	is.TB.FailNow()
 }
