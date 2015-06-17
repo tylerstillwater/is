@@ -79,5 +79,7 @@ func failDefault(is *Is, format string, args ...interface{}) {
 	}
 	if is.strict {
 		is.TB.FailNow()
+	} else {
+		is.TB.Fail()
 	}
 }
