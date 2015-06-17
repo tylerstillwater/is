@@ -77,5 +77,7 @@ func failDefault(is *Is, format string, args ...interface{}) {
 	if len(is.failFormat) != 0 {
 		fmt.Fprintf(output, is.failFormat+"\n", is.failArgs...)
 	}
-	is.TB.FailNow()
+	if is.strict {
+		is.TB.FailNow()
+	}
 }

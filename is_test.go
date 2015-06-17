@@ -164,3 +164,22 @@ func TestIsMsg(t *testing.T) {
 		t.Fatal("failArgs not set")
 	}
 }
+
+func TestIsLax(t *testing.T) {
+	is := New(t)
+
+	hit := 0
+
+	fail = func(is *Is, format string, args ...interface{}) {
+		if is.strict {
+			t.FailNow()
+		}
+		hit++
+	}
+
+	is.Lax().Equal(1, 2)
+
+	fail = failDefault
+
+	is.Strict().Equal(hit, 1)
+}

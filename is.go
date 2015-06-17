@@ -15,6 +15,7 @@ var output io.Writer = os.Stdout
 // fewer lines of code while improving communication of intent.
 type Is struct {
 	TB         testing.TB
+	strict     bool
 	failFormat string
 	failArgs   []interface{}
 }
@@ -25,7 +26,7 @@ func New(tb testing.TB) *Is {
 	if tb == nil {
 		log.Fatalln("You must provide a testing object.")
 	}
-	return &Is{TB: tb}
+	return &Is{TB: tb, strict: true}
 }
 
 // Msg defines a message to print in the event of a failure. This allows you
@@ -36,6 +37,22 @@ func (is *Is) Msg(format string, args ...interface{}) *Is {
 		failFormat: format,
 		failArgs:   args,
 	}
+}
+
+// Lax returns a copy of this instance of Is which does not abort the test if
+// a failure occurs. Use this to run a set of tests and see all the failures
+// at once.
+func (is *Is) Lax() *Is {
+	is.strict = false
+	return is
+}
+
+// Strict returns a copy of this instance of Is which aborts the test if a
+// failure occurs. This is the default behavior, thus this method has no
+// effect unless it is used to reverse a previous call to Lax.
+func (is *Is) Strict() *Is {
+	is.strict = true
+	return is
 }
 
 // Equal performs a deep compare of the provided objects and fails if they are
