@@ -43,16 +43,20 @@ func (is *Is) Msg(format string, args ...interface{}) *Is {
 // a failure occurs. Use this to run a set of tests and see all the failures
 // at once.
 func (is *Is) Lax() *Is {
-	is.strict = false
-	return is
+	return &Is{
+		TB:     is.TB,
+		strict: false,
+	}
 }
 
 // Strict returns a copy of this instance of Is which aborts the test if a
 // failure occurs. This is the default behavior, thus this method has no
 // effect unless it is used to reverse a previous call to Lax.
 func (is *Is) Strict() *Is {
-	is.strict = true
-	return is
+	return &Is{
+		TB:     is.TB,
+		strict: true,
+	}
 }
 
 // Equal performs a deep compare of the provided objects and fails if they are
