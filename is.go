@@ -36,6 +36,7 @@ func (is *Is) Msg(format string, args ...interface{}) *Is {
 		TB:         is.TB,
 		failFormat: format,
 		failArgs:   args,
+		strict:     is.strict,
 	}
 }
 
@@ -44,8 +45,10 @@ func (is *Is) Msg(format string, args ...interface{}) *Is {
 // at once.
 func (is *Is) Lax() *Is {
 	return &Is{
-		TB:     is.TB,
-		strict: false,
+		TB:         is.TB,
+		strict:     false,
+		failFormat: is.failFormat,
+		failArgs:   is.failArgs,
 	}
 }
 
@@ -54,8 +57,10 @@ func (is *Is) Lax() *Is {
 // effect unless it is used to reverse a previous call to Lax.
 func (is *Is) Strict() *Is {
 	return &Is{
-		TB:     is.TB,
-		strict: true,
+		TB:         is.TB,
+		strict:     true,
+		failFormat: is.failFormat,
+		failArgs:   is.failArgs,
 	}
 }
 
