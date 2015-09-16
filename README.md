@@ -38,6 +38,31 @@ func TestSomething(t *testing.T) {
 }
 ```
 
+By default, Is fails and stops the test immediately. If you prefer to run multiple assertions to see them all fail at once, use the `Lax` method:
+
+```go
+func TestSomething(t *testing.T) {
+	is := is.New(t).Lax()
+
+	is.Equal(1,someFunc()) // if this fails, a message is printed and the test continues
+	is.Equal(2,someOtherFunc()) // if this fails, a message is printed and the test continues
+```
+
+If you are using a relaxed instance of Is, you can switch it back to strict mode with `Strict`. This is useful when an assertion *must* be correct, or subsequent calls will panic:
+
+```go
+func TestSomething(t *testing.T) {
+	is := is.New(t).Lax()
+
+	results := someFunc()
+	is.Strict().Equal(len(results),3) // if this fails, a message is printed and testing stops
+	is.Equal(results[0],1) // if this fails, a message is printed and testing continues
+	is.Equal(results[1],2)
+	is.Equal(results[2],3)
+```
+
+Strict mode, in this case, applies only to the line on which it is invoked, as we don't overwrite our copy of the `is` variable.
+
 ## Contributing
 
 If you would like to contribute, please:
