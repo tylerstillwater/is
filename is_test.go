@@ -146,6 +146,8 @@ func TestIs(t *testing.T) {
 	is.False(false)
 	is.Zero(nil)
 	is.Nil((*testStruct)(nil))
+	is.OneOf(1, 2, 3, 1)
+	is.NotOneOf(1, 2, 3)
 
 	fail = func(is *Is, format string, args ...interface{}) {}
 	is.Equal((*testStruct)(nil), &testStruct{})

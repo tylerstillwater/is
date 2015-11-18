@@ -68,8 +68,8 @@ func (is *Is) Strict() *Is {
 // not equal.
 //
 // Equal does not respect type differences. If the types are different and
-// comparable (eg int32 and int64), but the values are the same, the objects
-// are considered equal.
+// comparable (eg int32 and int64), they will be compared as though they are
+// the same type.
 func (is *Is) Equal(a interface{}, b interface{}) {
 	result := isEqual(a, b)
 	if !result {
@@ -83,14 +83,58 @@ func (is *Is) Equal(a interface{}, b interface{}) {
 // equal.
 //
 // NotEqual does not respect type differences. If the types are different and
-// comparable (eg int32 and int64), but the values are different, the objects
-// are considered not equal.
+// comparable (eg int32 and int64), they will be compared as though they are
+// the same type.
 func (is *Is) NotEqual(a interface{}, b interface{}) {
 	result := isEqual(a, b)
 	if result {
 		fail(is, "expected objects '%s' and '%s' not to be equal",
 			objectTypeName(a),
 			objectTypeName(b))
+	}
+}
+
+// OneOf performs a deep compare of the provided object and an array of
+// comparison objects. It fails if the first object is not equal to one of the
+// comparison objects.
+//
+// OneOf does not respect type differences. If the types are different and
+// comparable (eg int32 and int64), they will be compared as though they are
+// the same type.
+func (is *Is) OneOf(a interface{}, b ...interface{}) {
+	result := false
+	for _, o := range b {
+		result = isEqual(a, o)
+		if result {
+			break
+		}
+	}
+	if !result {
+		fail(is, "expected object '%s' to be equal to one of '%s', but got: %v and %v",
+			objectTypeName(a),
+			objectTypeNames(b), a, b)
+	}
+}
+
+// NotOneOf performs a deep compare of the provided object and an array of
+// comparison objects. It fails if the first object is equal to one of the
+// comparison objects.
+//
+// NotOneOf does not respect type differences. If the types are different and
+// comparable (eg int32 and int64), they will be compared as though they are
+// the same type.
+func (is *Is) NotOneOf(a interface{}, b ...interface{}) {
+	result := false
+	for _, o := range b {
+		result = isEqual(a, o)
+		if result {
+			break
+		}
+	}
+	if result {
+		fail(is, "expected object '%s' not to be equal to one of '%s', but got: %v and %v",
+			objectTypeName(a),
+			objectTypeNames(b), a, b)
 	}
 }
 

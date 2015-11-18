@@ -1,12 +1,29 @@
 package is
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 )
 
 func objectTypeName(o interface{}) string {
 	return fmt.Sprintf("%T", o)
+}
+
+func objectTypeNames(o []interface{}) string {
+	if o == nil {
+		return objectTypeName(o)
+	}
+	if len(o) == 1 {
+		return objectTypeName(o[0])
+	}
+	var b bytes.Buffer
+	b.WriteString(objectTypeName(o[0]))
+	for _, e := range o[1:] {
+		b.WriteString(",")
+		b.WriteString(objectTypeName(e))
+	}
+	return b.String()
 }
 
 func isNil(o interface{}) bool {
