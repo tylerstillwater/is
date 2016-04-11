@@ -149,6 +149,15 @@ func TestIs(t *testing.T) {
 	is.OneOf(1, 2, 3, 1)
 	is.NotOneOf(1, 2, 3)
 
+	lens := []interface{}{
+		[]int{1, 2, 3},
+		[3]int{1, 2, 3},
+		map[int]int{1: 1, 2: 2, 3: 3},
+	}
+	for _, l := range lens {
+		is.Len(l, 3)
+	}
+
 	fail = func(is *Is, format string, args ...interface{}) {}
 	is.Equal((*testStruct)(nil), &testStruct{})
 	is.Equal(&testStruct{}, (*testStruct)(nil))

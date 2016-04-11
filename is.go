@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -218,6 +219,23 @@ func (is *Is) NotZero(o interface{}) {
 	result := isZero(o)
 	if result {
 		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
+	}
+}
+
+// Len checks the provided object to determine if it is the same length as the
+// provided length argument.
+//
+// If the object is not one of type array, slice or map, it will fail.
+func (is *Is) Len(o interface{}, l int) {
+	t := reflect.TypeOf(o)
+	if t.Kind() != reflect.Array &&
+		t.Kind() != reflect.Slice &&
+		t.Kind() != reflect.Map {
+		fail(is, "expected object '%s' to be of length '%d', but the object is not one of array, slice or map", objectTypeName(o), l)
+	}
+
+	if reflect.ValueOf(o).Len() != l {
+		fail(is, "expected object '%s' to be of length '%d'", objectTypeName(o), l)
 	}
 }
 
