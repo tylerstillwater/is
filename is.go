@@ -72,8 +72,7 @@ func (is *Is) Strict() *Is {
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
 func (is *Is) Equal(a interface{}, b interface{}) {
-	result := isEqual(a, b)
-	if !result {
+	if !isEqual(a, b) {
 		fail(is, "expected objects '%s' and '%s' to be equal, but got: %v and %v",
 			objectTypeName(a),
 			objectTypeName(b), a, b)
@@ -87,8 +86,7 @@ func (is *Is) Equal(a interface{}, b interface{}) {
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
 func (is *Is) NotEqual(a interface{}, b interface{}) {
-	result := isEqual(a, b)
-	if result {
+	if isEqual(a, b) {
 		fail(is, "expected objects '%s' and '%s' not to be equal",
 			objectTypeName(a),
 			objectTypeName(b))
@@ -141,8 +139,7 @@ func (is *Is) NotOneOf(a interface{}, b ...interface{}) {
 
 // Err checks the provided error object to determine if an error is present.
 func (is *Is) Err(e error) {
-	result := isNil(e)
-	if result {
+	if isNil(e) {
 		fail(is, "expected error")
 	}
 }
@@ -150,40 +147,35 @@ func (is *Is) Err(e error) {
 // NotErr checks the provided error object to determine if an error is not
 // present.
 func (is *Is) NotErr(e error) {
-	result := isNil(e)
-	if !result {
+	if !isNil(e) {
 		fail(is, "expected no error, but got: %v", e)
 	}
 }
 
 // Nil checks the provided object to determine if it is nil.
 func (is *Is) Nil(o interface{}) {
-	result := isNil(o)
-	if !result {
+	if !isNil(o) {
 		fail(is, "expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
 	}
 }
 
 // NotNil checks the provided object to determine if it is not nil.
 func (is *Is) NotNil(o interface{}) {
-	result := isNil(o)
-	if result {
+	if isNil(o) {
 		fail(is, "expected object '%s' not to be nil", objectTypeName(o))
 	}
 }
 
 // True checks the provided boolean to determine if it is true.
 func (is *Is) True(b bool) {
-	result := b == true
-	if !result {
+	if !b {
 		fail(is, "expected boolean to be true")
 	}
 }
 
 // False checks the provided boolean to determine if is false.
 func (is *Is) False(b bool) {
-	result := b == false
-	if !result {
+	if b {
 		fail(is, "expected boolean to be false")
 	}
 }
@@ -199,8 +191,7 @@ func (is *Is) False(b bool) {
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
 func (is *Is) Zero(o interface{}) {
-	result := isZero(o)
-	if !result {
+	if !isZero(o) {
 		fail(is, "expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
 	}
 }
@@ -216,8 +207,7 @@ func (is *Is) Zero(o interface{}) {
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
 func (is *Is) NotZero(o interface{}) {
-	result := isZero(o)
-	if result {
+	if isZero(o) {
 		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
 	}
 }
