@@ -162,6 +162,14 @@ func TestIs(t *testing.T) {
 	is.Equal((*testStruct)(nil), &testStruct{})
 	is.Equal(&testStruct{}, (*testStruct)(nil))
 	is.Equal((*testStruct)(nil), (*testStruct)(nil))
+
+	fail = func(is *Is, format string, args ...interface{}) {
+		fmt.Print(decorate(fmt.Sprintf(format, args...)))
+		t.FailNow()
+	}
+	is.ShouldPanic(func() {
+		panic("The sky is falling!")
+	})
 }
 
 func TestIsMsg(t *testing.T) {

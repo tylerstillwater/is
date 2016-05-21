@@ -229,6 +229,18 @@ func (is *Is) Len(o interface{}, l int) {
 	}
 }
 
+// ShouldPanic expects the provided function to panic. If the function does
+// not panic, this assertion fails.
+func (is *Is) ShouldPanic(f func()) {
+	defer func() {
+		r := recover()
+		if r == nil {
+			fail(is, "expected function to panic")
+		}
+	}()
+	f()
+}
+
 // SetOutput changes the message output Writer from the default (os.Stdout).
 // This may be useful if the application under test takes over the console, or
 // if logging to a file is desired.
