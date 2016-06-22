@@ -224,8 +224,9 @@ func (is *Is) Len(o interface{}, l int) {
 		fail(is, "expected object '%s' to be of length '%d', but the object is not one of array, slice or map", objectTypeName(o), l)
 	}
 
-	if reflect.ValueOf(o).Len() != l {
-		fail(is, "expected object '%s' to be of length '%d'", objectTypeName(o), l)
+	rLen := reflect.ValueOf(o).Len()
+	if rLen != l {
+		fail(is, "expected object '%s' to be of length '%d' but it was: %d", objectTypeName(o), l, rLen)
 	}
 }
 
