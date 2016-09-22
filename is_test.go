@@ -175,11 +175,25 @@ func TestIs(t *testing.T) {
 func TestIsMsg(t *testing.T) {
 	is := New(t)
 
-	is = is.Msg("something", "else")
-	if is.failFormat != "something" {
+	is = is.Msg("something %s", "else")
+	if is.failFormat != "something %s" {
 		t.Fatal("failFormat not set")
 	}
 	if is.failArgs[0].(string) != "else" {
+		t.Fatal("failArgs not set")
+	}
+
+	is = is.AddMsg("another %s %s", "couple", "things")
+	if is.failFormat != "something %s - another %s %s" {
+		t.Fatal("failFormat not set")
+	}
+	if is.failArgs[0].(string) != "else" {
+		t.Fatal("failArgs not set")
+	}
+	if is.failArgs[1].(string) != "couple" {
+		t.Fatal("failArgs not set")
+	}
+	if is.failArgs[2].(string) != "things" {
 		t.Fatal("failArgs not set")
 	}
 }

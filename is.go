@@ -1,6 +1,7 @@
 package is
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -35,9 +36,32 @@ func New(tb testing.TB) *Is {
 func (is *Is) Msg(format string, args ...interface{}) *Is {
 	return &Is{
 		TB:         is.TB,
+		strict:     is.strict,
 		failFormat: format,
 		failArgs:   args,
+	}
+}
+
+// AddMsg appends a message to print in the event of a failure. This allows
+// you to build a failure message in multiple steps. If no message was
+// previously set, simply sets the message.
+//
+// This method is most useful as a way of setting a default error message,
+// then adding additional information to the output for specific assertions.
+// For example:
+//
+// is := is.New(t).Msg("User ID: %d",u.ID)
+// /*do things*/
+// is.AddMsg("Raw Response: %s",body).Equal(res.StatusCode, http.StatusCreated)
+func (is *Is) AddMsg(format string, args ...interface{}) *Is {
+	if is.failFormat == "" {
+		return is.Msg(format, args...)
+	}
+	return &Is{
+		TB:         is.TB,
 		strict:     is.strict,
+		failFormat: fmt.Sprintf("%s - %s", is.failFormat, format),
+		failArgs:   append(is.failArgs, args...),
 	}
 }
 
