@@ -93,7 +93,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
+				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
 			is.Equal(test.a, reflect.ValueOf(test.b).Convert(cType).Interface())
@@ -104,7 +104,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
+				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
 			is.NotEqual(test.a, reflect.ValueOf(test.c).Convert(cType).Interface())
@@ -115,7 +115,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
+				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
 			is.Zero(reflect.ValueOf(test.d).Convert(cType).Interface())
@@ -126,7 +126,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(decorate(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...)))
+				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
 			is.NotZero(reflect.ValueOf(test.e).Convert(cType).Interface())
@@ -135,7 +135,7 @@ func TestIs(t *testing.T) {
 	}
 
 	fail = func(is *Is, format string, args ...interface{}) {
-		fmt.Print(decorate(fmt.Sprintf(format, args...)))
+		fmt.Print(fmt.Sprintf(format, args...))
 		t.FailNow()
 	}
 	is.Nil(nil)
@@ -164,7 +164,7 @@ func TestIs(t *testing.T) {
 	is.Equal((*testStruct)(nil), (*testStruct)(nil))
 
 	fail = func(is *Is, format string, args ...interface{}) {
-		fmt.Print(decorate(fmt.Sprintf(format, args...)))
+		fmt.Print(fmt.Sprintf(format, args...))
 		t.FailNow()
 	}
 	is.ShouldPanic(func() {
@@ -215,4 +215,45 @@ func TestIsLax(t *testing.T) {
 	fail = failDefault
 
 	is.Strict().Equal(hit, 1)
+}
+
+func TestIsOneOf(t *testing.T) {
+	is := New(t)
+
+	hit := 0
+	fail = func(is *Is, format string, args ...interface{}) {
+		hit++
+	}
+	is.OneOf(2, 1, 2, 3)
+	is.OneOf(4, 1, 2, 3)
+	is.NotOneOf(2, 1, 2, 3)
+	is.NotOneOf(4, 1, 2, 3)
+
+	fail = failDefault
+	is.Strict().Equal(hit, 2)
+}
+
+func TestIsFailures(t *testing.T) {
+	is := New(t)
+
+	hit := 0
+	fail = func(is *Is, format string, args ...interface{}) {
+		hit++
+	}
+
+	is.NotEqual(1, 1)
+	is.Err(nil)
+	is.NotErr(errors.New("error"))
+	is.Nil(&hit)
+	is.NotNil(nil)
+	is.True(false)
+	is.False(true)
+	is.Zero(1)
+	is.NotZero(0)
+	is.Len([]int{}, 1)
+	is.Len(nil, 1)
+	is.ShouldPanic(func() {})
+
+	fail = failDefault
+	is.Strict().Equal(hit, 12)
 }

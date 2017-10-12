@@ -7,10 +7,14 @@ Is provides a quick, clean and simple framework for writing Go tests.
 To install, simply execute:
 
 ```
-go get gopkg.in/tylerb/is.v1
+go get github.com/tylerb/is
 ```
 
-I am using [gopkg.in](http://http://labix.org/gopkg.in) to control releases.
+## Vendoring
+
+Vendoring is recommended, as this library can change from time to time. The last change was updating it to use the new `Helper()` method in the 1.9 testing framework.
+
+Check out the official Go dependency manager, [dep](https://github.com/golang/dep). Alternatively, I also like [glide](https://github.com/Masterminds/glide).
 
 ## Usage
 

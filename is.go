@@ -2,14 +2,10 @@ package is
 
 import (
 	"fmt"
-	"io"
 	"log"
-	"os"
 	"reflect"
 	"testing"
 )
-
-var output io.Writer = os.Stdout
 
 // Is provides methods that leverage the existing testing capabilities found
 // in the Go test framework. The methods provided allow for a more natural,
@@ -96,6 +92,7 @@ func (is *Is) Strict() *Is {
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
 func (is *Is) Equal(a interface{}, b interface{}) {
+	is.TB.Helper()
 	if !isEqual(a, b) {
 		fail(is, "expected objects '%s' and '%s' to be equal, but got: %v and %v",
 			objectTypeName(a),
@@ -110,6 +107,7 @@ func (is *Is) Equal(a interface{}, b interface{}) {
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
 func (is *Is) NotEqual(a interface{}, b interface{}) {
+	is.TB.Helper()
 	if isEqual(a, b) {
 		fail(is, "expected objects '%s' and '%s' not to be equal",
 			objectTypeName(a),
@@ -125,6 +123,7 @@ func (is *Is) NotEqual(a interface{}, b interface{}) {
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
 func (is *Is) OneOf(a interface{}, b ...interface{}) {
+	is.TB.Helper()
 	result := false
 	for _, o := range b {
 		result = isEqual(a, o)
@@ -147,6 +146,7 @@ func (is *Is) OneOf(a interface{}, b ...interface{}) {
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
 func (is *Is) NotOneOf(a interface{}, b ...interface{}) {
+	is.TB.Helper()
 	result := false
 	for _, o := range b {
 		result = isEqual(a, o)
@@ -163,6 +163,7 @@ func (is *Is) NotOneOf(a interface{}, b ...interface{}) {
 
 // Err checks the provided error object to determine if an error is present.
 func (is *Is) Err(e error) {
+	is.TB.Helper()
 	if isNil(e) {
 		fail(is, "expected error")
 	}
@@ -171,6 +172,7 @@ func (is *Is) Err(e error) {
 // NotErr checks the provided error object to determine if an error is not
 // present.
 func (is *Is) NotErr(e error) {
+	is.TB.Helper()
 	if !isNil(e) {
 		fail(is, "expected no error, but got: %v", e)
 	}
@@ -178,6 +180,7 @@ func (is *Is) NotErr(e error) {
 
 // Nil checks the provided object to determine if it is nil.
 func (is *Is) Nil(o interface{}) {
+	is.TB.Helper()
 	if !isNil(o) {
 		fail(is, "expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
 	}
@@ -185,6 +188,7 @@ func (is *Is) Nil(o interface{}) {
 
 // NotNil checks the provided object to determine if it is not nil.
 func (is *Is) NotNil(o interface{}) {
+	is.TB.Helper()
 	if isNil(o) {
 		fail(is, "expected object '%s' not to be nil", objectTypeName(o))
 	}
@@ -192,6 +196,7 @@ func (is *Is) NotNil(o interface{}) {
 
 // True checks the provided boolean to determine if it is true.
 func (is *Is) True(b bool) {
+	is.TB.Helper()
 	if !b {
 		fail(is, "expected boolean to be true")
 	}
@@ -199,6 +204,7 @@ func (is *Is) True(b bool) {
 
 // False checks the provided boolean to determine if is false.
 func (is *Is) False(b bool) {
+	is.TB.Helper()
 	if b {
 		fail(is, "expected boolean to be false")
 	}
@@ -215,6 +221,7 @@ func (is *Is) False(b bool) {
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
 func (is *Is) Zero(o interface{}) {
+	is.TB.Helper()
 	if !isZero(o) {
 		fail(is, "expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
 	}
@@ -231,6 +238,7 @@ func (is *Is) Zero(o interface{}) {
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
 func (is *Is) NotZero(o interface{}) {
+	is.TB.Helper()
 	if isZero(o) {
 		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
 	}
@@ -241,11 +249,14 @@ func (is *Is) NotZero(o interface{}) {
 //
 // If the object is not one of type array, slice or map, it will fail.
 func (is *Is) Len(o interface{}, l int) {
+	is.TB.Helper()
 	t := reflect.TypeOf(o)
-	if t.Kind() != reflect.Array &&
-		t.Kind() != reflect.Slice &&
-		t.Kind() != reflect.Map {
+	if o == nil ||
+		(t.Kind() != reflect.Array &&
+			t.Kind() != reflect.Slice &&
+			t.Kind() != reflect.Map) {
 		fail(is, "expected object '%s' to be of length '%d', but the object is not one of array, slice or map", objectTypeName(o), l)
+		return
 	}
 
 	rLen := reflect.ValueOf(o).Len()
@@ -257,6 +268,7 @@ func (is *Is) Len(o interface{}, l int) {
 // ShouldPanic expects the provided function to panic. If the function does
 // not panic, this assertion fails.
 func (is *Is) ShouldPanic(f func()) {
+	is.TB.Helper()
 	defer func() {
 		r := recover()
 		if r == nil {
@@ -264,11 +276,4 @@ func (is *Is) ShouldPanic(f func()) {
 		}
 	}()
 	f()
-}
-
-// SetOutput changes the message output Writer from the default (os.Stdout).
-// This may be useful if the application under test takes over the console, or
-// if logging to a file is desired.
-func SetOutput(w io.Writer) {
-	output = w
 }

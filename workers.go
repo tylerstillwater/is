@@ -90,13 +90,16 @@ var fail = failDefault
 
 // failDefault is the default failure function.
 func failDefault(is *Is, format string, args ...interface{}) {
-	fmt.Fprint(output, decorate(fmt.Sprintf(format, args...)))
+	is.TB.Helper()
+
+	failFmt := ""
 	if len(is.failFormat) != 0 {
-		fmt.Fprintf(output, is.failFormat+"\n", is.failArgs...)
+		failFmt = fmt.Sprintf("%s - %s", format, is.failFormat)
 	}
+	args = append(args, is.failArgs...)
 	if is.strict {
-		is.TB.FailNow()
+		is.TB.Fatalf(failFmt, args...)
 	} else {
-		is.TB.Fail()
+		is.TB.Errorf(failFmt, args...)
 	}
 }
