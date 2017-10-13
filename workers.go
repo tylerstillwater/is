@@ -92,11 +92,11 @@ var fail = failDefault
 func failDefault(is *Is, format string, args ...interface{}) {
 	is.TB.Helper()
 
-	failFmt := ""
+	failFmt := format
 	if len(is.failFormat) != 0 {
 		failFmt = fmt.Sprintf("%s - %s", format, is.failFormat)
+		args = append(args, is.failArgs...)
 	}
-	args = append(args, is.failArgs...)
 	if is.strict {
 		is.TB.Fatalf(failFmt, args...)
 	} else {
