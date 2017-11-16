@@ -27,6 +27,25 @@ func New(tb testing.TB) *Is {
 	return &Is{TB: tb, strict: true}
 }
 
+// New creates a new copy of your Is object and replaces the internal testing
+// object with the provided testing object. This is useful for re-initializing
+// your `is` instance inside a subtest so that it doesn't panic when using
+// Strict mode.
+//
+// For example, creating your initial instance as such
+//  is := is.New(t)
+// is the convention, but this obviously shadows the `is` package namespace.
+// Inside your subtest, you can do the exact same thing to initialize a locally scoped
+// variable that uses the subtest's testing.T object.
+func (is *Is) New(tb testing.TB) *Is {
+	return &Is{
+		TB:         tb,
+		strict:     is.strict,
+		failFormat: is.failFormat,
+		failArgs:   is.failArgs,
+	}
+}
+
 // Msg defines a message to print in the event of a failure. This allows you
 // to print out additional information about a failure if it happens.
 func (is *Is) Msg(format string, args ...interface{}) *Is {
