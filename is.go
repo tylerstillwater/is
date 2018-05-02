@@ -113,9 +113,9 @@ func (is *Is) Strict() *Is {
 func (is *Is) Equal(a interface{}, b interface{}) {
 	is.TB.Helper()
 	if !isEqual(a, b) {
-		fail(is, "expected objects '%s' and '%s' to be equal, but got: %v and %v",
-			objectTypeName(a),
-			objectTypeName(b), a, b)
+		fail(is, "expected %v (%s). got %v (%s)",
+			a, objectTypeName(a),
+			b, objectTypeName(b))
 	}
 }
 
