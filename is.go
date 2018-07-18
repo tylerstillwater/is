@@ -110,12 +110,12 @@ func (is *Is) Strict() *Is {
 // Equal does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) Equal(a interface{}, b interface{}) {
+func (is *Is) Equal(actual interface{}, expected interface{}) {
 	is.TB.Helper()
-	if !isEqual(a, b) {
-		fail(is, "expected %v (%s). got %v (%s)",
-			a, objectTypeName(a),
-			b, objectTypeName(b))
+	if !isEqual(actual, expected) {
+		fail(is, "got %v (%s). expected %v (%s)",
+			actual, objectTypeName(actual),
+			expected, objectTypeName(expected))
 	}
 }
 
