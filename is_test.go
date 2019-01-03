@@ -141,6 +141,7 @@ func TestIs(t *testing.T) {
 	is.Nil(nil)
 	is.NotNil(&testStruct{v: 1})
 	is.Err(errors.New("error"))
+	is.ErrMsg(errors.New("another error"), "another error")
 	is.NotErr(nil)
 	is.True(true)
 	is.False(false)

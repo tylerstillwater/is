@@ -188,6 +188,16 @@ func (is *Is) Err(e error) {
 	}
 }
 
+// ErrMsg checks the provided error object to determine if error message matches the expected string
+func (is *Is) ErrMsg(e error, expectedMsg string) {
+	is.TB.Helper()
+	if isNil(e) {
+		fail(is, "expected error %#v", expectedMsg)
+	} else {
+		is.Equal(e.Error(), expectedMsg)
+	}
+}
+
 // NotErr checks the provided error object to determine if an error is not
 // present.
 func (is *Is) NotErr(e error) {
