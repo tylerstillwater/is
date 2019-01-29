@@ -1,4 +1,4 @@
-# is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.png)](http://godoc.org/github.com/tylerb/is) [![Build Status](https://circleci.com/gh/tylerb/is.svg?style=shield&circle-token=94428439ffc6eda6471dc218471dab20985f444c)](https://circleci.com/gh/tylerb/is)
+# is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.svg)](http://godoc.org/github.com/tylerb/is) [![Build Status](https://circleci.com/gh/tylerb/is.svg?style=shield&circle-token=94428439ffc6eda6471dc218471dab20985f444c)](https://circleci.com/gh/tylerb/is)
 
 Is provides a quick, clean and simple framework for writing Go tests.
 
