@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"time"
 
 	"testing"
 )
@@ -256,4 +257,23 @@ func TestIsFailures(t *testing.T) {
 
 	fail = failDefault
 	is.Strict().Equal(hit, 12)
+}
+
+func TestWaitForTrue(t *testing.T) {
+	is := New(t)
+
+	hit := 0
+	fail = func(is *Is, format string, args ...interface{}) {
+		hit++
+	}
+
+	is.WaitForTrue(200*time.Millisecond, func() bool {
+		return false
+	})
+	is.Strict().Equal(hit, 1)
+
+	is.WaitForTrue(200*time.Millisecond, func() bool {
+		return true
+	})
+	is.Strict().Equal(hit, 1)
 }

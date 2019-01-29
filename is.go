@@ -5,6 +5,7 @@ import (
 	"log"
 	"reflect"
 	"testing"
+	"time"
 )
 
 // Is provides methods that leverage the existing testing capabilities found
@@ -295,4 +296,32 @@ func (is *Is) ShouldPanic(f func()) {
 		}
 	}()
 	f()
+}
+
+// EqualType checks the type of the two provided objects and
+// fails if they are not the same.
+func (is *Is) EqualType(expected, actual interface{}) {
+	is.TB.Helper()
+	if reflect.TypeOf(expected) != reflect.TypeOf(actual) {
+		fail(is, "expected objects '%s' to be of the same type as object '%s'", objectTypeName(expected), objectTypeName(actual))
+	}
+}
+
+// WaitForTrue waits until the provided func returns true. If the timeout is
+// reached before the function returns true, the test will fail.
+func (is *Is) WaitForTrue(timeout time.Duration, f func() bool) {
+	is.TB.Helper()
+	after := time.After(timeout)
+	for {
+		select {
+		case <-after:
+			fail(is, "function did not return true within the timeout of %v", timeout)
+			return
+		default:
+			if f() {
+				return
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
 }
