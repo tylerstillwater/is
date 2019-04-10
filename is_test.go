@@ -277,3 +277,63 @@ func TestWaitForTrue(t *testing.T) {
 	})
 	is.Strict().Equal(hit, 1)
 }
+
+type equaler struct {
+	equal  bool
+	called bool
+}
+
+func (e *equaler) Equal(in interface{}) bool {
+	e.called = true
+	v, ok := in.(*equaler)
+	if !ok {
+		return false
+	}
+	return e.equal == v.equal
+}
+
+func TestEqualer(t *testing.T) {
+	is := New(t)
+
+	hit := 0
+	fail = func(is *Is, format string, args ...interface{}) {
+		hit++
+	}
+
+	a := &equaler{equal: true}
+	b := &equaler{}
+
+	is.Equal(a, b)
+	if !a.called {
+		t.Fatalf("a.Equal should have been called")
+	}
+
+	is.Equal(b, a)
+	if !b.called {
+		t.Fatalf("b.Equal should have been called")
+	}
+
+	if hit != 2 {
+		t.Fatalf("fail func should have been called 2 times, but was called %d times", hit)
+	}
+
+	a.called = false
+	b.called = false
+	b.equal = true
+	hit = 0
+
+	is.NotEqual(a, b)
+	if !a.called {
+		t.Fatalf("a.Equal should have been called")
+	}
+
+	is.NotEqual(b, a)
+	if !b.called {
+		t.Fatalf("b.Equal should have been called")
+	}
+
+	if hit != 2 {
+		t.Fatalf("fail func should have been called 2 times, but was called %d times", hit)
+	}
+
+}

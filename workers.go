@@ -70,12 +70,18 @@ func isEqual(a interface{}, b interface{}) bool {
 		}
 		return a == b
 	}
+
+	// Call a.Equaler if it is implemented
+	if e, ok := a.(Equaler); ok {
+		return e.Equal(b)
+	}
+
 	if reflect.DeepEqual(a, b) {
 		return true
 	}
+
 	aValue := reflect.ValueOf(a)
 	bValue := reflect.ValueOf(b)
-
 	// Convert types and compare
 	if bValue.Type().ConvertibleTo(aValue.Type()) {
 		return reflect.DeepEqual(a, bValue.Convert(aValue.Type()).Interface())

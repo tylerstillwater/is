@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+// Equaler is used to define equality for types.
+//
+// For example, this is useful if you have a struct that includes time.Time
+// fields. You can implement this method and use time.Time.Equal() to do the
+// comparison.
+type Equaler interface {
+	Equal(in interface{}) bool
+}
+
 // Is provides methods that leverage the existing testing capabilities found
 // in the Go test framework. The methods provided allow for a more natural,
 // efficient and expressive approach to writing tests. The goal is to write
@@ -114,7 +123,7 @@ func (is *Is) Strict() *Is {
 func (is *Is) Equal(actual interface{}, expected interface{}) {
 	is.TB.Helper()
 	if !isEqual(actual, expected) {
-		fail(is, "got %v (%s). expected %v (%s)",
+		fail(is, "got '%v' (%s). expected '%v' (%s)",
 			actual, objectTypeName(actual),
 			expected, objectTypeName(expected))
 	}
