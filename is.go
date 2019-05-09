@@ -90,6 +90,18 @@ func (is *Is) AddMsg(format string, args ...interface{}) *Is {
 	}
 }
 
+func (is *Is) PrependMsg(format string, args ...interface{}) *Is {
+	if is.failFormat == "" {
+		return is.Msg(format, args...)
+	}
+	return &Is{
+		TB:         is.TB,
+		strict:     is.strict,
+		failFormat: fmt.Sprintf("%s - %s", format, is.failFormat),
+		failArgs:   append(args, is.failArgs...),
+	}
+}
+
 // Lax returns a copy of this instance of Is which does not abort the test if
 // a failure occurs. Use this to run a set of tests and see all the failures
 // at once.
