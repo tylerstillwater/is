@@ -90,6 +90,7 @@ func (is *Is) AddMsg(format string, args ...interface{}) *Is {
 	}
 }
 
+// PrependMsg is like AddMsg, but it adds the message before currently added messages
 func (is *Is) PrependMsg(format string, args ...interface{}) *Is {
 	if is.failFormat == "" {
 		return is.Msg(format, args...)
