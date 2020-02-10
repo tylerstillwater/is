@@ -1,4 +1,4 @@
-# is [![GoDoc](https://godoc.org/github.com/tylerb/is?status.png)](http://godoc.org/github.com/tylerb/is) [![Build Status](https://circleci.com/gh/tylerb/is.svg?style=shield&circle-token=94428439ffc6eda6471dc218471dab20985f444c)](https://circleci.com/gh/tylerb/is)
+# is [![GoDoc](https://godoc.org/github.com/tylerb/is/v3?status.png)](http://godoc.org/github.com/tylerb/is/v3) [![Build Status](https://circleci.com/gh/tylerb/is/v3.svg?style=shield&circle-token=94428439ffc6eda6471dc218471dab20985f444c)](https://circleci.com/gh/tylerb/is/v3)
 
 Is provides a quick, clean and simple framework for writing Go tests.
 
@@ -7,26 +7,18 @@ Is provides a quick, clean and simple framework for writing Go tests.
 To install, simply execute:
 
 ```
-go get github.com/tylerb/is
+go get -u github.com/tylerb/is/v3
 ```
-
-## Vendoring
-
-Vendoring is recommended, as this library can change from time to time. The last change was updating it to use the new `Helper()` method in the 1.9 testing framework.
-
-Check out the official Go dependency manager, [dep](https://github.com/golang/dep). Alternatively, I also like [glide](https://github.com/Masterminds/glide).
 
 ## Usage
 
-Using `Is` is simple:
-
 ```go
 func TestSomething(t *testing.T) {
-	is := is.New(t)
+	assert := is.New(t)
 
 	expected := 10
-	result, _ := awesomeFunction()
-	is.Equal(expected,result)
+	actual, _ := awesomeFunction()
+	assert.Equal(actual, expected)
 }
 ```
 
@@ -34,48 +26,28 @@ If you'd like a bit more information when a test fails, you may use the `Msg()` 
 
 ```go
 func TestSomething(t *testing.T) {
-	is := is.New(t)
+	assert := is.New(t)
 
 	expected := 10
-	result, details := awesomeFunction()
-	is.Msg("result details: %s", details).Equal(expected,result)
+	actual, details := awesomeFunction()
+	assert.Msg("actual details: %s", details).Equal(actual, expected)
 }
 ```
 
-By default, Is fails and stops the test immediately. If you prefer to run multiple assertions to see them all fail at once, use the `Lax` method:
+By default, any assertion that fails will halt termination of the test. If you would like to run a group of assertions
+in a row, you may use the `Lax` method. This is useful for asserting/printing many values at once, so you can correct
+all the issues between test runs.
 
 ```go
 func TestSomething(t *testing.T) {
-	is := is.New(t).Lax()
+	assert := is.New(t)
 
-	is.Equal(1,someFunc()) // if this fails, a message is printed and the test continues
-	is.Equal(2,someOtherFunc()) // if this fails, a message is printed and the test continues
+	assert.Lax(func (lax Asserter) {
+		lax.Equal(1, 2)
+		lax.True(false)
+		lax.ShouldPanic(func(){})
+	}) 
+}
 ```
 
-If you are using a relaxed instance of Is, you can switch it back to strict mode with `Strict`. This is useful when an assertion *must* be correct, or subsequent calls will panic:
-
-```go
-func TestSomething(t *testing.T) {
-	is := is.New(t).Lax()
-
-	results := someFunc()
-	is.Strict().Equal(len(results),3) // if this fails, a message is printed and testing stops
-	is.Equal(results[0],1) // if this fails, a message is printed and testing continues
-	is.Equal(results[1],2)
-	is.Equal(results[2],3)
-```
-
-Strict mode, in this case, applies only to the line on which it is invoked, as we don't overwrite our copy of the `is` variable.
-
-## Contributing
-
-If you would like to contribute, please:
-
-1. Create a GitHub issue regarding the contribution. Features and bugs should be discussed beforehand.
-2. Fork the repository.
-3. Create a pull request with your solution. This pull request should reference and close the issues (Fix #2).
-
-All pull requests should:
-
-1. Pass [gometalinter -t .](https://github.com/alecthomas/gometalinter) with no warnings.
-2. Be `go fmt` formatted.
+If any of the assertions fail inside that function, an additional error will be printed and test execution will halt.

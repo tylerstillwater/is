@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"time"
-
 	"testing"
+	"time"
 )
 
 var numberTypes = []reflect.Type{
@@ -88,67 +87,67 @@ var tests = []struct {
 	},
 }
 
-func TestIs(t *testing.T) {
-	is := New(t)
+func Test(t *testing.T) {
+	assert := New(t)
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...interface{}) {
+			fail = func(is *asserter, format string, args ...interface{}) {
 				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
-			is.Equal(test.a, reflect.ValueOf(test.b).Convert(cType).Interface())
+			assert.Equal(test.a, reflect.ValueOf(test.b).Convert(cType).Interface())
 		}
-		is.Equal(test.a, test.b)
+		assert.Equal(test.a, test.b)
 	}
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...interface{}) {
+			fail = func(is *asserter, format string, args ...interface{}) {
 				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
-			is.NotEqual(test.a, reflect.ValueOf(test.c).Convert(cType).Interface())
+			assert.NotEqual(test.a, reflect.ValueOf(test.c).Convert(cType).Interface())
 		}
-		is.NotEqual(test.a, test.c)
+		assert.NotEqual(test.a, test.c)
 	}
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...interface{}) {
+			fail = func(is *asserter, format string, args ...interface{}) {
 				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
-			is.Zero(reflect.ValueOf(test.d).Convert(cType).Interface())
+			assert.Zero(reflect.ValueOf(test.d).Convert(cType).Interface())
 		}
-		is.Zero(test.d)
+		assert.Zero(test.d)
 	}
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...interface{}) {
+			fail = func(is *asserter, format string, args ...interface{}) {
 				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
 				t.FailNow()
 			}
-			is.NotZero(reflect.ValueOf(test.e).Convert(cType).Interface())
+			assert.NotZero(reflect.ValueOf(test.e).Convert(cType).Interface())
 		}
-		is.NotZero(test.e)
+		assert.NotZero(test.e)
 	}
 
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
 		fmt.Print(fmt.Sprintf(format, args...))
 		t.FailNow()
 	}
-	is.Nil(nil)
-	is.NotNil(&testStruct{v: 1})
-	is.Err(errors.New("error"))
-	is.NotErr(nil)
-	is.True(true)
-	is.False(false)
-	is.Zero(nil)
-	is.Nil((*testStruct)(nil))
-	is.OneOf(1, 2, 3, 1)
-	is.NotOneOf(1, 2, 3)
+	assert.Nil(nil)
+	assert.NotNil(&testStruct{v: 1})
+	assert.Err(errors.New("error"))
+	assert.NotErr(nil)
+	assert.True(true)
+	assert.False(false)
+	assert.Zero(nil)
+	assert.Nil((*testStruct)(nil))
+	assert.OneOf(1, 2, 3, 1)
+	assert.NotOneOf(1, 2, 3)
 
 	lens := []interface{}{
 		[]int{1, 2, 3},
@@ -156,126 +155,150 @@ func TestIs(t *testing.T) {
 		map[int]int{1: 1, 2: 2, 3: 3},
 	}
 	for _, l := range lens {
-		is.Len(l, 3)
+		assert.Len(l, 3)
 	}
 
-	fail = func(is *Is, format string, args ...interface{}) {}
-	is.Equal((*testStruct)(nil), &testStruct{})
-	is.Equal(&testStruct{}, (*testStruct)(nil))
-	is.Equal((*testStruct)(nil), (*testStruct)(nil))
+	fail = func(is *asserter, format string, args ...interface{}) {}
+	assert.Equal((*testStruct)(nil), &testStruct{})
+	assert.Equal(&testStruct{}, (*testStruct)(nil))
+	assert.Equal((*testStruct)(nil), (*testStruct)(nil))
 
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
 		fmt.Print(fmt.Sprintf(format, args...))
 		t.FailNow()
 	}
-	is.ShouldPanic(func() {
+	assert.ShouldPanic(func() {
 		panic("The sky is falling!")
 	})
 }
 
-func TestIsMsg(t *testing.T) {
-	is := New(t)
+func TestMsg(t *testing.T) {
+	assert := New(t)
 
-	is = is.Msg("something %s", "else")
-	if is.failFormat != "something %s" {
+	assert = assert.Msg("something %s", "else")
+	if assert.(*asserter).failFormat != "something %s" {
 		t.Fatal("failFormat not set")
 	}
-	if is.failArgs[0].(string) != "else" {
+	if assert.(*asserter).failArgs[0].(string) != "else" {
 		t.Fatal("failArgs not set")
 	}
 
-	is = is.AddMsg("another %s %s", "couple", "things")
-	if is.failFormat != "something %s - another %s %s" {
+	assert = assert.AddMsg("another %s %s", "couple", "things")
+	if assert.(*asserter).failFormat != "something %s - another %s %s" {
 		t.Fatal("failFormat not set")
 	}
-	if is.failArgs[0].(string) != "else" {
+	if assert.(*asserter).failArgs[0].(string) != "else" {
 		t.Fatal("failArgs not set")
 	}
-	if is.failArgs[1].(string) != "couple" {
+	if assert.(*asserter).failArgs[1].(string) != "couple" {
 		t.Fatal("failArgs not set")
 	}
-	if is.failArgs[2].(string) != "things" {
+	if assert.(*asserter).failArgs[2].(string) != "things" {
 		t.Fatal("failArgs not set")
 	}
 }
 
-func TestIsLax(t *testing.T) {
-	is := New(t)
+func TestLaxNoFailure(t *testing.T) {
+	assert := New(t)
 
 	hit := 0
 
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
+		hit++
+	}
+
+	assert.Lax(func(lax Asserter) {
+		lax.Equal(1, 1)
+	})
+
+	fail = failDefault
+
+	assert.Equal(hit, 0)
+}
+
+func TestLaxFailure(t *testing.T) {
+	assert := New(t)
+
+	hitLax := 0
+	hitStrict := 0
+
+	fail = func(is *asserter, format string, args ...interface{}) {
 		if is.strict {
-			t.FailNow()
+			hitStrict++
+			return
 		}
-		hit++
+		is.failed = true
+		hitLax++
 	}
 
-	is.Lax().Equal(1, 2)
+	assert.Lax(func(lax Asserter) {
+		lax.Equal(1, 2)
+	})
 
 	fail = failDefault
 
-	is.Strict().Equal(hit, 1)
+	assert.Equal(hitLax, 1)
+	assert.Equal(hitStrict, 1)
 }
 
-func TestIsOneOf(t *testing.T) {
-	is := New(t)
+func TestOneOf(t *testing.T) {
+	assert := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
 		hit++
 	}
-	is.OneOf(2, 1, 2, 3)
-	is.OneOf(4, 1, 2, 3)
-	is.NotOneOf(2, 1, 2, 3)
-	is.NotOneOf(4, 1, 2, 3)
+	assert.OneOf(2, 1, 2, 3)
+	assert.OneOf(4, 1, 2, 3)
+	assert.NotOneOf(2, 1, 2, 3)
+	assert.NotOneOf(4, 1, 2, 3)
 
 	fail = failDefault
-	is.Strict().Equal(hit, 2)
+	assert.Equal(hit, 2)
 }
 
-func TestIsFailures(t *testing.T) {
-	is := New(t)
+func TestFailures(t *testing.T) {
+	assert := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
 		hit++
 	}
 
-	is.NotEqual(1, 1)
-	is.Err(nil)
-	is.NotErr(errors.New("error"))
-	is.Nil(&hit)
-	is.NotNil(nil)
-	is.True(false)
-	is.False(true)
-	is.Zero(1)
-	is.NotZero(0)
-	is.Len([]int{}, 1)
-	is.Len(nil, 1)
-	is.ShouldPanic(func() {})
+	assert.NotEqual(1, 1)
+	assert.Err(nil)
+	assert.NotErr(errors.New("error"))
+	assert.Nil(&hit)
+	assert.NotNil(nil)
+	assert.True(false)
+	assert.False(true)
+	assert.Zero(1)
+	assert.NotZero(0)
+	assert.Len([]int{}, 1)
+	assert.Len(nil, 1)
+	assert.ShouldPanic(func() {})
 
 	fail = failDefault
-	is.Strict().Equal(hit, 12)
+	assert.Equal(hit, 12)
 }
 
 func TestWaitForTrue(t *testing.T) {
-	is := New(t)
+	assert := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
 		hit++
 	}
 
-	is.WaitForTrue(200*time.Millisecond, func() bool {
+	assert.WaitForTrue(200*time.Millisecond, func() bool {
 		return false
 	})
-	is.Strict().Equal(hit, 1)
+	assert.Equal(hit, 1)
 
-	is.WaitForTrue(200*time.Millisecond, func() bool {
+	assert.WaitForTrue(200*time.Millisecond, func() bool {
 		return true
 	})
-	is.Strict().Equal(hit, 1)
+	assert.Equal(hit, 1)
 }
 
 type equaler struct {
@@ -293,22 +316,22 @@ func (e *equaler) Equal(in interface{}) bool {
 }
 
 func TestEqualer(t *testing.T) {
-	is := New(t)
+	assert := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...interface{}) {
+	fail = func(is *asserter, format string, args ...interface{}) {
 		hit++
 	}
 
 	a := &equaler{equal: true}
 	b := &equaler{}
 
-	is.Equal(a, b)
+	assert.Equal(a, b)
 	if !a.called {
 		t.Fatalf("a.Equal should have been called")
 	}
 
-	is.Equal(b, a)
+	assert.Equal(b, a)
 	if !b.called {
 		t.Fatalf("b.Equal should have been called")
 	}
@@ -322,12 +345,12 @@ func TestEqualer(t *testing.T) {
 	b.equal = true
 	hit = 0
 
-	is.NotEqual(a, b)
+	assert.NotEqual(a, b)
 	if !a.called {
 		t.Fatalf("a.Equal should have been called")
 	}
 
-	is.NotEqual(b, a)
+	assert.NotEqual(b, a)
 	if !b.called {
 		t.Fatalf("b.Equal should have been called")
 	}
@@ -335,5 +358,4 @@ func TestEqualer(t *testing.T) {
 	if hit != 2 {
 		t.Fatalf("fail func should have been called 2 times, but was called %d times", hit)
 	}
-
 }

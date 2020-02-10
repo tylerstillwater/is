@@ -95,8 +95,10 @@ func isEqual(a interface{}, b interface{}) bool {
 var fail = failDefault
 
 // failDefault is the default failure function.
-func failDefault(is *Is, format string, args ...interface{}) {
-	is.TB.Helper()
+func failDefault(is *asserter, format string, args ...interface{}) {
+	is.tb.Helper()
+
+	is.failed = true
 
 	failFmt := format
 	if len(is.failFormat) != 0 {
@@ -104,8 +106,8 @@ func failDefault(is *Is, format string, args ...interface{}) {
 		args = append(args, is.failArgs...)
 	}
 	if is.strict {
-		is.TB.Fatalf(failFmt, args...)
+		is.tb.Fatalf(failFmt, args...)
 	} else {
-		is.TB.Errorf(failFmt, args...)
+		is.tb.Errorf(failFmt, args...)
 	}
 }
