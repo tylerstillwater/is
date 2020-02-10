@@ -1,4 +1,4 @@
-# is [![GoDev](https://img.shields.io/static/v1?label=godev&message=documentation&color=informational&style=plastic&&url=https://pkg.go.dev/github.com/tylerb/is@v3.0.0?tab=doc)](https://pkg.go.dev/github.com/tylerb/is@v3.0.0?tab=doc) [![Build Status](https://circleci.com/gh/tylerb/is/tree/v3.svg?style=shield&circle-token=94428439ffc6eda6471dc218471dab20985f444c)](https://circleci.com/gh/tylerb/is/tree/v3)
+# is [![GoDev](https://img.shields.io/static/v1?label=godev&message=documentation&color=informational&style=plastic&&url=https://pkg.go.dev/github.com/tylerb/is@v3.0.0?tab=doc)](https://pkg.go.dev/github.com/tylerb/is/v3@v3.0.0?tab=doc) [![Build Status](https://circleci.com/gh/tylerb/is/tree/v3.svg?style=shield&circle-token=94428439ffc6eda6471dc218471dab20985f444c)](https://circleci.com/gh/tylerb/is/tree/v3)
 
 Is provides a quick, clean and simple framework for writing Go tests.
 
