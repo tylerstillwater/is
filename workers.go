@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"reflect"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func objectTypeName(o interface{}) string {
@@ -110,4 +112,23 @@ func failDefault(is *asserter, format string, args ...interface{}) {
 	} else {
 		is.tb.Errorf(failFmt, args...)
 	}
+}
+
+func diff(actual interface{}, expected interface{}) string {
+	aKind := reflect.TypeOf(actual).Kind()
+	eKind := reflect.TypeOf(expected).Kind()
+
+	if aKind != eKind {
+		return ""
+	}
+
+	if aKind != reflect.Slice && aKind != reflect.Map {
+		return ""
+	}
+
+	s := cmp.Diff(actual, expected)
+	if s != "" {
+		return " - Diff:\n" + s
+	}
+	return ""
 }

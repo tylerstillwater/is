@@ -196,9 +196,11 @@ func (self *asserter) AddMsg(format string, args ...interface{}) Asserter {
 func (self *asserter) Equal(actual interface{}, expected interface{}) {
 	self.tb.Helper()
 	if !isEqual(actual, expected) {
-		fail(self, "actual value '%v' (%s) should be equal to expected value '%v' (%s)",
+		fail(self, "actual value '%v' (%s) should be equal to expected value '%v' (%s)%s",
 			actual, objectTypeName(actual),
-			expected, objectTypeName(expected))
+			expected, objectTypeName(expected),
+			diff(actual, expected),
+		)
 	}
 }
 
