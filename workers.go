@@ -2,6 +2,7 @@ package is
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"reflect"
 
@@ -117,16 +118,48 @@ func failDefault(is *asserter, format string, args ...interface{}) {
 func diff(actual interface{}, expected interface{}) string {
 	aKind := reflect.TypeOf(actual).Kind()
 	eKind := reflect.TypeOf(expected).Kind()
-
 	if aKind != eKind {
 		return ""
 	}
-
 	if aKind != reflect.Slice && aKind != reflect.Map {
 		return ""
 	}
-
-	s := cmp.Diff(actual, expected)
+	f := func(src, dest interface{}) bool {
+		bytes, err := json.Marshal(src)
+		if err != nil {
+			return false
+		}
+		err = json.Unmarshal(bytes, &dest)
+		if err != nil {
+			return false
+		}
+		return true
+	}
+	var s string
+	switch aKind {
+	case reflect.Slice:
+		var aSlice []interface{}
+		var eSlice []interface{}
+		if !f(actual, &aSlice) {
+			return ""
+		}
+		if !f(expected, &eSlice) {
+			return ""
+		}
+		s = cmp.Diff(aSlice, eSlice)
+	case reflect.Map:
+		var aMap map[interface{}]interface{}
+		var eMap map[interface{}]interface{}
+		if !f(actual, &aMap) {
+			return ""
+		}
+		if !f(expected, &eMap) {
+			return ""
+		}
+		s = cmp.Diff(aMap, eMap)
+	default:
+		return ""
+	}
 	if s != "" {
 		return " - Diff:\n" + s
 	}
