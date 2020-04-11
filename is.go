@@ -13,8 +13,19 @@ import (
 // For example, this is useful if you have a struct that includes time.Time
 // fields. You can implement this method and use time.Time.Equal() to do the
 // comparison.
+//
+// Deprecated
 type Equaler interface {
 	Equal(in interface{}) bool
+}
+
+// EqualityChecker is used to define equality for types during testing.
+//
+// For example, this is useful if you have a struct that includes time.Time
+// fields. You can implement this method and use time.Time.Equal() to do the
+// comparison.
+type EqualityChecker interface {
+	IsEqual(in interface{}) bool
 }
 
 // Asserter provides methods that leverage the existing testing capabilities found

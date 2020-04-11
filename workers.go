@@ -79,6 +79,11 @@ func isEqual(a interface{}, b interface{}) bool {
 		return e.Equal(b)
 	}
 
+	// Call a.EqualityChecker if it is implemented
+	if e, ok := a.(EqualityChecker); ok {
+		return e.IsEqual(b)
+	}
+
 	if reflect.DeepEqual(a, b) {
 		return true
 	}
